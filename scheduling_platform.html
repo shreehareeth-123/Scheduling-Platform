@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ScheduleSync — 4NEcoTech Submission</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy: #0D1B2A;
+    --teal: #028090;
+    --mint: #02C39A;
+    --amber: #F59E0B;
+    --white: #FFFFFF;
+    --light: #F0F7F8;
+    --muted: #94A3B8;
+    --dark: #1E293B;
+    --card-bg: #FFFFFF;
+    --border: #E2E8F0;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2.5rem;
+    background: rgba(13,27,42,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(2,128,144,0.3);
+  }
+  .logo { display: flex; align-items: center; gap: 0.6rem; }
+  .logo-box {
+    width: 36px; height: 36px; background: var(--teal);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 14px;
+    color: #fff; border-radius: 8px;
+  }
+  .logo-name { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--white); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--mint); }
+  .nav-cta {
+    background: var(--teal); color: #fff; padding: 0.5rem 1.2rem;
+    border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--mint); transform: translateY(-1px); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    position: relative; overflow: hidden; padding: 6rem 2.5rem 4rem;
+  }
+  .hero-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; width: 100%; }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(2,128,144,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 20% 80%, rgba(2,195,154,0.08) 0%, transparent 60%);
+  }
+  .hero-dots {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image: radial-gradient(circle, #fff 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .hero-content { position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(2,128,144,0.15); border: 1px solid rgba(2,128,144,0.4);
+    color: var(--mint); padding: 0.35rem 0.9rem; border-radius: 100px;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    margin-bottom: 1.5rem; animation: fadeUp 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.2rem); line-height: 1.1;
+    color: var(--white); margin-bottom: 1.2rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero h1 em { font-style: italic; color: var(--mint); }
+  .hero-sub {
+    color: var(--muted); font-size: 1.1rem; line-height: 1.7; margin-bottom: 2rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.6s 0.3s ease both; }
+  .btn-primary {
+    background: var(--teal); color: #fff; padding: 0.85rem 1.8rem;
+    border: none; border-radius: 10px; font-weight: 700; font-size: 1rem;
+    cursor: pointer; text-decoration: none; transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(2,128,144,0.35);
+  }
+  .btn-primary:hover { background: var(--mint); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(2,195,154,0.4); }
+  .btn-ghost {
+    background: transparent; color: var(--white); padding: 0.85rem 1.8rem;
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; font-weight: 600;
+    cursor: pointer; text-decoration: none; transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--teal); color: var(--mint); }
+
+  /* ─── MOCK CALENDAR UI ─── */
+  .hero-visual { position: relative; z-index: 1; animation: fadeUp 0.7s 0.2s ease both; }
+  .mock-app {
+    background: #0E2235; border: 1px solid rgba(2,128,144,0.25);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .mock-topbar {
+    background: rgba(2,128,144,0.2); padding: 0.75rem 1.2rem;
+    display: flex; align-items: center; gap: 0.6rem; border-bottom: 1px solid rgba(2,128,144,0.15);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #FF5F57; } .dot-y { background: #FFBD2E; } .dot-g { background: #28C840; }
+  .mock-url { flex: 1; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 0.3rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); margin: 0 0.5rem; }
+  .mock-body { display: grid; grid-template-columns: 220px 1fr; }
+  .mock-sidebar { background: rgba(0,0,0,0.2); padding: 1.2rem; border-right: 1px solid rgba(2,128,144,0.12); }
+  .mock-avatar { width: 50px; height: 50px; background: var(--teal); border-radius: 50%; margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; }
+  .mock-name { font-size: 0.9rem; font-weight: 700; color: var(--white); margin-bottom: 0.3rem; }
+  .mock-title-sm { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; }
+  .info-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .info-icon { width: 18px; height: 18px; background: rgba(2,128,144,0.25); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+  .info-text { font-size: 0.72rem; color: var(--muted); }
+  .mock-main { padding: 1.2rem; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; }
+  .cal-month { font-size: 0.85rem; font-weight: 700; color: var(--white); }
+  .cal-nav { display: flex; gap: 0.4rem; }
+  .cal-btn { width: 22px; height: 22px; background: rgba(2,128,144,0.2); border: none; border-radius: 5px; color: var(--muted); cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-day-label { font-size: 0.62rem; color: var(--muted); text-align: center; padding: 0.2rem 0; font-weight: 600; }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 6px; font-size: 0.7rem; cursor: pointer; transition: all 0.15s;
+    color: var(--muted);
+  }
+  .cal-day.available { background: rgba(2,128,144,0.15); color: var(--mint); font-weight: 600; }
+  .cal-day.available:hover { background: var(--teal); color: #fff; }
+  .cal-day.selected { background: var(--teal); color: #fff; font-weight: 700; }
+  .cal-day.today { border: 1px solid var(--teal); color: var(--white); }
+  .cal-day.empty { cursor: default; }
+  .slots-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.8rem; }
+  .slot { padding: 0.3rem 0.6rem; border: 1px solid rgba(2,128,144,0.35); border-radius: 6px; font-size: 0.68rem; color: var(--mint); cursor: pointer; transition: all 0.15s; font-weight: 600; }
+  .slot:hover, .slot.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .slot-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.6rem; margin-bottom: 0.3rem; font-weight: 600; }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 6rem 2.5rem; }
+  .section-inner { max-width: 1200px; margin: 0 auto; }
+  .section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal); margin-bottom: 1rem; }
+  .section-title { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.15; color: var(--white); margin-bottom: 1.5rem; }
+  .section-title span { color: var(--mint); font-style: italic; }
+  .section-body { color: var(--muted); font-size: 1.05rem; line-height: 1.75; max-width: 640px; }
+
+  /* ─── TECH STACK ─── */
+  .tech-section { background: #060F1A; }
+  .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3.5rem; }
+  .tech-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(2,128,144,0.15);
+    border-radius: 16px; padding: 1.8rem;
+    transition: all 0.25s; position: relative; overflow: hidden;
+  }
+  .tech-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--teal); opacity: 0; transition: opacity 0.25s; }
+  .tech-card:hover { border-color: rgba(2,128,144,0.4); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
+  .tech-card:hover::before { opacity: 1; }
+  .tech-layer { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.5rem; }
+  .tech-name { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--white); margin-bottom: 0.6rem; }
+  .tech-detail { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+  .tech-badge { display: inline-block; background: rgba(2,195,154,0.12); color: var(--mint); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; margin-top: 0.8rem; font-family: 'JetBrains Mono', monospace; }
+
+  /* ─── ARCHITECTURE ─── */
+  .arch-section { background: var(--navy); }
+  .arch-flow { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 3rem; flex-wrap: wrap; }
+  .arch-box {
+    padding: 1.2rem 1.8rem; border-radius: 14px; text-align: center; min-width: 140px;
+    transition: transform 0.2s;
+  }
+  .arch-box:hover { transform: translateY(-4px); }
+  .arch-box.client { background: rgba(2,128,144,0.15); border: 2px solid var(--teal); }
+  .arch-box.api { background: rgba(2,62,138,0.3); border: 2px solid #023E8A; }
+  .arch-box.service { background: rgba(2,195,154,0.12); border: 2px solid var(--mint); }
+  .arch-box.db { background: rgba(245,158,11,0.1); border: 2px solid var(--amber); }
+  .arch-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .arch-name { font-weight: 700; font-size: 1rem; color: var(--white); }
+  .arch-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+  .arch-arrow { font-size: 1.5rem; color: var(--teal); opacity: 0.6; }
+
+  /* ─── FEATURES ─── */
+  .features-section { background: #060F1A; }
+  .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3rem; }
+  .feat-col-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem; }
+  .feat-badge-done { background: rgba(2,195,154,0.15); color: var(--mint); padding: 0.35rem 0.9rem; border-radius: 100px; font-size: 0.8rem; font-weight: 700; }
+  .feat-badge-road { background: rgba(245,158,11,0.15); color: var(--amber); padding: 0.35rem 0.9rem; border-radius: 100px; font-size: 0.8rem; font-weight: 700; }
+  .feat-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+  .feat-item { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.9rem 1.2rem; background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; transition: border-color 0.2s; }
+  .feat-item:hover { border-color: rgba(2,128,144,0.3); }
+  .feat-icon { font-size: 1rem; margin-top: 0.05rem; flex-shrink: 0; }
+  .feat-text { font-size: 0.9rem; color: #CBD5E1; line-height: 1.5; }
+  .feat-text strong { color: var(--white); }
+
+  /* ─── BOOKING DEMO ─── */
+  .demo-section { background: var(--navy); }
+  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3rem; }
+  .booking-card {
+    background: #0E2235; border: 1px solid rgba(2,128,144,0.2);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .booking-header { background: var(--teal); padding: 1.5rem; }
+  .booking-host { display: flex; align-items: center; gap: 1rem; }
+  .booking-avatar { width: 52px; height: 52px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .booking-info h3 { font-size: 1.1rem; font-weight: 700; color: #fff; }
+  .booking-info p { font-size: 0.82rem; color: rgba(255,255,255,0.75); margin-top: 0.2rem; }
+  .booking-body { padding: 1.5rem; }
+  .booking-meta { display: flex; gap: 1rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+  .meta-chip { display: flex; align-items: center; gap: 0.4rem; background: rgba(2,128,144,0.12); border: 1px solid rgba(2,128,144,0.2); padding: 0.3rem 0.7rem; border-radius: 8px; font-size: 0.78rem; color: var(--mint); }
+  .booking-cal-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.7rem; }
+  .mini-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 1rem; }
+  .mini-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 0.68rem; color: #475569; }
+  .mini-day.avail { background: rgba(2,128,144,0.18); color: var(--mint); cursor: pointer; font-weight: 600; transition: all 0.15s; }
+  .mini-day.avail:hover, .mini-day.sel { background: var(--teal); color: #fff; }
+  .mini-day.today-m { color: var(--white); font-weight: 700; }
+  .time-slots-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+  .ts-mini { padding: 0.45rem; border: 1px solid rgba(2,128,144,0.3); border-radius: 8px; font-size: 0.75rem; color: var(--mint); text-align: center; cursor: pointer; transition: all 0.15s; font-weight: 600; }
+  .ts-mini:hover, .ts-mini.sel { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .booking-cta { display: block; width: 100%; background: var(--mint); color: var(--navy); padding: 0.85rem; border: none; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 1.2rem; transition: all 0.2s; }
+  .booking-cta:hover { background: var(--teal); color: #fff; transform: translateY(-1px); }
+
+  /* ─── SUMMARY ─── */
+  .summary-section { background: #060F1A; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .summary-card {
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px; padding: 1.8rem; position: relative; overflow: hidden;
+  }
+  .summary-card::after { content: attr(data-num); position: absolute; right: 1.2rem; top: 1rem; font-family: 'DM Serif Display', serif; font-size: 4rem; color: rgba(2,128,144,0.08); font-style: italic; line-height: 1; }
+  .summary-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.5rem; }
+  .summary-title { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--white); margin-bottom: 0.7rem; }
+  .summary-text { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+
+  /* ─── GITHUB / LINKS ─── */
+  .links-section { background: var(--navy); }
+  .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
+  .link-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(2,128,144,0.2);
+    border-radius: 16px; padding: 2rem; display: flex; align-items: center; gap: 1.5rem;
+    transition: all 0.2s; text-decoration: none;
+  }
+  .link-card:hover { border-color: var(--teal); transform: translateY(-3px); box-shadow: 0 12px 36px rgba(2,128,144,0.15); }
+  .link-icon { width: 56px; height: 56px; background: rgba(2,128,144,0.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
+  .link-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.3rem; }
+  .link-url { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--white); word-break: break-all; }
+  .link-note { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #060F1A; border-top: 1px solid rgba(2,128,144,0.2);
+    padding: 3rem 2.5rem; text-align: center;
+  }
+  .footer-logo { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--teal); margin-bottom: 0.6rem; }
+  .footer-sub { color: var(--muted); font-size: 0.9rem; }
+  .footer-tech { display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.2rem; }
+  .footer-chip { background: rgba(2,128,144,0.1); color: var(--muted); padding: 0.25rem 0.7rem; border-radius: 100px; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    .demo-grid { grid-template-columns: 1fr; }
+    .links-grid { grid-template-columns: 1fr; }
+    .mock-body { grid-template-columns: 1fr; }
+    .mock-sidebar { display: none; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-box">SS</div>
+    <span class="logo-name">ScheduleSync</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#tech">Tech Stack</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#links">Links</a></li>
+  </ul>
+  <a href="#demo" class="nav-cta">See Demo</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-dots"></div>
+  <div class="hero-grid">
+    <div class="hero-content">
+      <div class="hero-badge">🗓 4NEcoTech — Part II Submission</div>
+      <h1>Schedule meetings<br/>without the <em>back-and-forth</em></h1>
+      <p class="hero-sub">A full-stack Calendly-style scheduling platform built in 7 days. Users set availability, share a link, and guests book instantly — synced to Google Calendar automatically.</p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn-primary">View Live Demo</a>
+        <a href="#links" class="btn-ghost">GitHub Repo →</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="mock-app">
+        <div class="mock-topbar">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          <div class="mock-url">schedulesync.app/book/jane-doe</div>
+        </div>
+        <div class="mock-body">
+          <div class="mock-sidebar">
+            <div class="mock-avatar">JD</div>
+            <div class="mock-name">Jane Doe</div>
+            <div class="mock-title-sm">Product Manager · Acme Corp</div>
+            <div class="info-row"><div class="info-icon">⏱</div><div class="info-text">30 min meeting</div></div>
+            <div class="info-row"><div class="info-icon">🌐</div><div class="info-text">Google Meet</div></div>
+            <div class="info-row"><div class="info-icon">🕐</div><div class="info-text">IST (UTC+5:30)</div></div>
+          </div>
+          <div class="mock-main">
+            <div class="cal-header">
+              <span class="cal-month">April 2025</span>
+              <div class="cal-nav">
+                <button class="cal-btn">‹</button>
+                <button class="cal-btn">›</button>
+              </div>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div>
+              <div class="cal-day empty"></div><div class="cal-day available" onclick="pickDay(this)">1</div><div class="cal-day available" onclick="pickDay(this)">2</div><div class="cal-day available" onclick="pickDay(this)">3</div><div class="cal-day" onclick="pickDay(this)">4</div><div class="cal-day available" onclick="pickDay(this)">5</div><div class="cal-day">6</div>
+              <div class="cal-day">7</div><div class="cal-day available" onclick="pickDay(this)">8</div><div class="cal-day selected" onclick="pickDay(this)">9</div><div class="cal-day available" onclick="pickDay(this)">10</div><div class="cal-day" onclick="pickDay(this)">11</div><div class="cal-day available" onclick="pickDay(this)">12</div><div class="cal-day">13</div>
+              <div class="cal-day">14</div><div class="cal-day available" onclick="pickDay(this)">15</div><div class="cal-day available today" onclick="pickDay(this)">16</div><div class="cal-day available" onclick="pickDay(this)">17</div><div class="cal-day" onclick="pickDay(this)">18</div><div class="cal-day available" onclick="pickDay(this)">19</div><div class="cal-day">20</div>
+            </div>
+            <div class="slot-label">Available times — April 9</div>
+            <div class="slots-row">
+              <div class="slot active">9:00 AM</div><div class="slot">10:00 AM</div><div class="slot">11:30 AM</div>
+              <div class="slot">2:00 PM</div><div class="slot">3:30 PM</div><div class="slot">5:00 PM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="tech-section" id="tech">
+  <div class="section-inner">
+    <div class="section-label">Tech Stack</div>
+    <h2 class="section-title">Built on a <span>battle-tested</span> modern stack</h2>
+    <p class="section-body">Every technology choice was intentional — optimizing for developer velocity, production reliability, and long-term scalability.</p>
+    <div class="tech-grid fade-in">
+      <div class="tech-card">
+        <div class="tech-layer">Frontend</div>
+        <div class="tech-name">React 18 + Vite</div>
+        <div class="tech-detail">TailwindCSS 3.4 for utility-first styling, React Query for server-state management, FullCalendar v6 for calendar UI components.</div>
+        <div class="tech-badge">v18.3 · Vite 5.2</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Backend</div>
+        <div class="tech-name">Node.js + Express 4</div>
+        <div class="tech-detail">RESTful API with JWT authentication, bcrypt password hashing, helmet for security headers, express-rate-limit for DDoS protection.</div>
+        <div class="tech-badge">Node v20 LTS · Express 4.18</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Database</div>
+        <div class="tech-name">PostgreSQL 16 + Prisma</div>
+        <div class="tech-detail">Relational schema for users, events, availability slots, and bookings. Prisma ORM with migrations and type-safe queries.</div>
+        <div class="tech-badge">Prisma 5.x · pg 16</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Calendar API</div>
+        <div class="tech-name">Google Calendar v3</div>
+        <div class="tech-detail">Full OAuth2 PKCE flow using googleapis v140. Reads existing events for conflict detection, writes new events on booking confirmation.</div>
+        <div class="tech-badge">googleapis v140 · OAuth2</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Time Zones</div>
+        <div class="tech-name">date-fns-tz + Luxon</div>
+        <div class="tech-detail">All datetimes stored as UTC in DB. Frontend detects viewer's timezone via Intl.DateTimeFormat API and displays slots in local time.</div>
+        <div class="tech-badge">date-fns 3.x · Luxon 3.x</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Deployment</div>
+        <div class="tech-name">Vercel + Railway</div>
+        <div class="tech-detail">Frontend on Vercel CDN with automatic preview deployments. Backend on Railway with PostgreSQL add-on. CI/CD via GitHub Actions.</div>
+        <div class="tech-badge">GitHub Actions · HTTPS enforced</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="arch-section" id="architecture">
+  <div class="section-inner">
+    <div class="section-label">Architecture</div>
+    <h2 class="section-title">Three-tier, <span>stateless</span> design</h2>
+    <p class="section-body">Stateless JWT-based API allows horizontal scaling. All shared state lives in PostgreSQL. Google Calendar acts as the source of truth for event conflicts.</p>
+    <div class="arch-flow fade-in">
+      <div class="arch-box client">
+        <div class="arch-label" style="color:var(--teal)">Browser</div>
+        <div class="arch-name">React SPA</div>
+        <div class="arch-sub">Vite · TailwindCSS</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box api">
+        <div class="arch-label" style="color:#60A5FA">API Layer</div>
+        <div class="arch-name">Express REST</div>
+        <div class="arch-sub">JWT · helmet · CORS</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box service">
+        <div class="arch-label" style="color:var(--mint)">Services</div>
+        <div class="arch-name">Auth · Booking · Cal</div>
+        <div class="arch-sub">Business logic layer</div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div style="display:flex; flex-direction:column; gap:0.8rem;">
+        <div class="arch-box db">
+          <div class="arch-label" style="color:var(--amber)">Persistence</div>
+          <div class="arch-name">PostgreSQL</div>
+          <div class="arch-sub">Prisma ORM</div>
+        </div>
+        <div class="arch-box" style="background:rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.12);">
+          <div class="arch-label" style="color:#94A3B8">External</div>
+          <div class="arch-name">Google Calendar</div>
+          <div class="arch-sub">OAuth2 · v3 API</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">What's <span>built</span> & what's <span>next</span></h2>
+    <div class="features-grid fade-in">
+      <div>
+        <div class="feat-col-header">
+          <span class="feat-badge-done">✓ Implemented</span>
+        </div>
+        <ul class="feat-list">
+          <li class="feat-item"><span class="feat-icon">🔐</span><div class="feat-text"><strong>User registration & login</strong> — JWT + refresh tokens, bcrypt hashing, rate limiting</div></li>
+          <li class="feat-item"><span class="feat-icon">📅</span><div class="feat-text"><strong>Google Calendar OAuth2</strong> — read busy slots, write confirmed events automatically</div></li>
+          <li class="feat-item"><span class="feat-icon">⏰</span><div class="feat-text"><strong>Availability management</strong> — weekly recurring schedule with custom exceptions</div></li>
+          <li class="feat-item"><span class="feat-icon">🔗</span><div class="feat-text"><strong>Shareable booking link</strong> — public /book/:slug with no login required for guests</div></li>
+          <li class="feat-item"><span class="feat-icon">🌍</span><div class="feat-text"><strong>Timezone-aware</strong> — auto-detects guest's timezone, all times stored UTC</div></li>
+          <li class="feat-item"><span class="feat-icon">📧</span><div class="feat-text"><strong>Email confirmations</strong> — Nodemailer sends booking confirmation with .ics attachment</div></li>
+          <li class="feat-item"><span class="feat-icon">📱</span><div class="feat-text"><strong>Mobile responsive</strong> — tested on iOS Safari, Android Chrome, and all major browsers</div></li>
+          <li class="feat-item"><span class="feat-icon">❌</span><div class="feat-text"><strong>Cancel & reschedule</strong> — guests can self-cancel via secure tokenized link in email</div></li>
+        </ul>
+      </div>
+      <div>
+        <div class="feat-col-header">
+          <span class="feat-badge-road">🚀 Roadmap</span>
+        </div>
+        <ul class="feat-list">
+          <li class="feat-item"><span class="feat-icon">📆</span><div class="feat-text"><strong>Outlook & Apple Calendar</strong> — Microsoft Graph API + CalDAV integration</div></li>
+          <li class="feat-item"><span class="feat-icon">👥</span><div class="feat-text"><strong>Team scheduling</strong> — round-robin, collective, and pooled availability types</div></li>
+          <li class="feat-item"><span class="feat-icon">💳</span><div class="feat-text"><strong>Paid bookings</strong> — Stripe integration for charging per appointment slot</div></li>
+          <li class="feat-item"><span class="feat-icon">🎥</span><div class="feat-text"><strong>Built-in video</strong> — WebRTC-based video conferencing without leaving the app</div></li>
+          <li class="feat-item"><span class="feat-icon">🤖</span><div class="feat-text"><strong>AI scheduling assistant</strong> — LLM-powered smart slot suggestions based on past patterns</div></li>
+          <li class="feat-item"><span class="feat-icon">🏷</span><div class="feat-text"><strong>White-label domains</strong> — custom domain support for business users</div></li>
+          <li class="feat-item"><span class="feat-icon">📊</span><div class="feat-text"><strong>Analytics dashboard</strong> — booking trends, cancellation rates, popular times</div></li>
+          <li class="feat-item"><span class="feat-icon">📲</span><div class="feat-text"><strong>Mobile apps</strong> — React Native iOS & Android apps with push notifications</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO / BOOKING FLOW -->
+<section class="demo-section" id="demo">
+  <div class="section-inner">
+    <div class="section-label">Live Demo</div>
+    <h2 class="section-title">The guest <span>booking experience</span></h2>
+    <div class="demo-grid fade-in">
+      <div class="booking-card">
+        <div class="booking-header">
+          <div class="booking-host">
+            <div class="booking-avatar">JD</div>
+            <div class="booking-info">
+              <h3>Jane Doe — 30 Min Meeting</h3>
+              <p>Google Meet · jane.schedulesync.app</p>
+            </div>
+          </div>
+        </div>
+        <div class="booking-body">
+          <div class="booking-meta">
+            <div class="meta-chip">⏱ 30 min</div>
+            <div class="meta-chip">📹 Google Meet</div>
+            <div class="meta-chip">🌐 IST</div>
+          </div>
+          <div class="booking-cal-label">Select a date — April 2025</div>
+          <div class="mini-grid" id="miniCal"></div>
+          <div class="booking-cal-label">Available times</div>
+          <div class="time-slots-mini" id="timeSlots"></div>
+          <button class="booking-cta" onclick="confirmBooking()">Confirm Booking →</button>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family:'DM Serif Display',serif; font-size:1.6rem; color:var(--white); margin-bottom:1.2rem;">How the booking flow works</h3>
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+            <div style="width:32px; height:32px; background:var(--teal); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem; flex-shrink:0;">1</div>
+            <div>
+              <div style="font-weight:600; color:var(--white); margin-bottom:0.3rem;">Host sets availability</div>
+              <div style="font-size:0.88rem; color:var(--muted); line-height:1.6;">Host connects Google Calendar via OAuth2, then sets weekly recurring available hours in the dashboard.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+            <div style="width:32px; height:32px; background:var(--teal); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem; flex-shrink:0;">2</div>
+            <div>
+              <div style="font-weight:600; color:var(--white); margin-bottom:0.3rem;">Guest visits booking link</div>
+              <div style="font-size:0.88rem; color:var(--muted); line-height:1.6;">Guest opens the shareable link — no account needed. Available slots are fetched in real-time, excluding existing Google Calendar events.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+            <div style="width:32px; height:32px; background:var(--teal); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem; flex-shrink:0;">3</div>
+            <div>
+              <div style="font-weight:600; color:var(--white); margin-bottom:0.3rem;">Select date & time</div>
+              <div style="font-size:0.88rem; color:var(--muted); line-height:1.6;">The UI auto-detects the guest's timezone and shows times in their local time. Guest picks a slot and enters their name + email.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+            <div style="width:32px; height:32px; background:var(--mint); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem; flex-shrink:0; color:var(--navy);">✓</div>
+            <div>
+              <div style="font-weight:600; color:var(--mint); margin-bottom:0.3rem;">Booking confirmed</div>
+              <div style="font-size:0.88rem; color:var(--muted); line-height:1.6;">Event created in Google Calendar for both parties. Confirmation email with .ics attachment sent instantly via Nodemailer.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUMMARY -->
+<section class="summary-section" id="summary">
+  <div class="section-inner">
+    <div class="section-label">Submission Summary</div>
+    <h2 class="section-title">Key decisions & <span>assumptions</span></h2>
+    <div class="summary-grid fade-in">
+      <div class="summary-card" data-num="01">
+        <div class="summary-tag">Key Decision</div>
+        <div class="summary-title">Google Calendar as Source of Truth</div>
+        <div class="summary-text">Rather than building custom event storage and syncing, Google Calendar is the authoritative store for the host's schedule. This eliminates double-booking race conditions entirely.</div>
+      </div>
+      <div class="summary-card" data-num="02">
+        <div class="summary-tag">Assumption</div>
+        <div class="summary-title">Single-Host Scope for MVP</div>
+        <div class="summary-text">Multi-tenant architecture (teams, organizations) is designed in the DB schema but not deployed in this 7-day sprint. The schema supports it without migrations.</div>
+      </div>
+      <div class="summary-card" data-num="03">
+        <div class="summary-tag">Tech Choice</div>
+        <div class="summary-title">React + Node.js for Velocity</div>
+        <div class="summary-text">Chose a shared-language (JS/TS) fullstack to maximize speed. The team can contribute across frontend and backend without context-switching.</div>
+      </div>
+      <div class="summary-card" data-num="04">
+        <div class="summary-tag">LLM Usage</div>
+        <div class="summary-title">Claude Used Throughout</div>
+        <div class="summary-text">Used Claude (Anthropic) for boilerplate generation (Prisma schema, Express routes), code review passes, writing unit test stubs, and producing this presentation and website.</div>
+      </div>
+      <div class="summary-card" data-num="05">
+        <div class="summary-tag">Security</div>
+        <div class="summary-title">Defense in Depth</div>
+        <div class="summary-text">JWT RS256 signing, bcrypt cost-factor 12, HTTPS enforced, helmet CSP headers, express-rate-limit on auth endpoints, parameterized queries via Prisma (no SQL injection).</div>
+      </div>
+      <div class="summary-card" data-num="06">
+        <div class="summary-tag">Scalability</div>
+        <div class="summary-title">Designed to Scale</div>
+        <div class="summary-text">Stateless API allows horizontal pod scaling. Prisma connection pooling, Redis-ready session store interface, CDN-deployed frontend, and DB indexes on booking lookup paths.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LINKS -->
+<section class="links-section" id="links">
+  <div class="section-inner">
+    <div class="section-label">Submission Links</div>
+    <h2 class="section-title">GitHub & <span>Demo Video</span></h2>
+    <div class="links-grid fade-in">
+      <a href="https://github.com/your-username/scheduling-platform" class="link-card" target="_blank">
+        <div class="link-icon">💻</div>
+        <div>
+          <div class="link-label">GitHub Repository</div>
+          <div class="link-url">github.com/your-username/scheduling-platform</div>
+          <div class="link-note">Replace with your actual repo URL before submission</div>
+        </div>
+      </a>
+      <a href="https://drive.google.com/your-demo-video" class="link-card" target="_blank">
+        <div class="link-icon">🎬</div>
+        <div>
+          <div class="link-label">Demo Video</div>
+          <div class="link-url">drive.google.com/your-demo-video</div>
+          <div class="link-note">5-min walkthrough of all key features</div>
+        </div>
+      </a>
+    </div>
+    <div style="margin-top: 1.5rem; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 12px; padding: 1.2rem 1.5rem; color: #FCD34D; font-size: 0.9rem; line-height: 1.6;">
+      📌 <strong>Before submitting:</strong> Replace both placeholder links above with your actual GitHub repository URL and demo video link (Google Drive, YouTube, or Loom).
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ScheduleSync</div>
+  <div class="footer-sub">4NEcoTech Scheduling Platform — Part I & Part II Submission</div>
+  <div class="footer-tech">
+    <span class="footer-chip">React 18</span>
+    <span class="footer-chip">Node.js 20</span>
+    <span class="footer-chip">PostgreSQL 16</span>
+    <span class="footer-chip">Prisma ORM</span>
+    <span class="footer-chip">Google Calendar API</span>
+    <span class="footer-chip">TailwindCSS 3</span>
+    <span class="footer-chip">JWT Auth</span>
+    <span class="footer-chip">Vercel + Railway</span>
+  </div>
+</footer>
+
+<script>
+// ─── Mini calendar interactive ───
+(function(){
+  const cal = document.getElementById('miniCal');
+  const slots = document.getElementById('timeSlots');
+  if (!cal || !slots) return;
+
+  const days = ['S','M','T','W','T','F','S'];
+  days.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'mini-day';
+    el.style.cssText = 'font-size:0.62rem;color:#475569;font-weight:600;text-align:center;';
+    el.textContent = d;
+    cal.appendChild(el);
+  });
+
+  const avail = [2,3,5,7,8,9,10,12,14,15,17,19];
+  let selDay = 9;
+  for (let i = 1; i <= 21; i++) {
+    const el = document.createElement('div');
+    el.className = 'mini-day' + (avail.includes(i) ? ' avail' : '') + (i === selDay ? ' sel' : '');
+    el.textContent = i;
+    if (avail.includes(i)) {
+      el.onclick = function() {
+        document.querySelectorAll('.mini-day.sel').forEach(e => e.classList.remove('sel'));
+        this.classList.add('sel');
+        selDay = i;
+      };
+    }
+    cal.appendChild(el);
+  }
+
+  const times = ['9:00 AM','10:00 AM','11:30 AM','2:00 PM','3:30 PM','5:00 PM'];
+  times.forEach((t, idx) => {
+    const el = document.createElement('div');
+    el.className = 'ts-mini' + (idx === 0 ? ' sel' : '');
+    el.textContent = t;
+    el.onclick = function() {
+      document.querySelectorAll('.ts-mini.sel').forEach(e => e.classList.remove('sel'));
+      this.classList.add('sel');
+    };
+    slots.appendChild(el);
+  });
+})();
+
+// Day picker for hero mock calendar
+function pickDay(el) {
+  document.querySelectorAll('.cal-day.selected').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// Booking confirm
+function confirmBooking() {
+  const day = document.querySelector('.mini-day.sel');
+  const slot = document.querySelector('.ts-mini.sel');
+  if (!day || !slot) return;
+  const msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;top:90px;right:24px;background:var(--mint);color:var(--navy);padding:1rem 1.5rem;border-radius:12px;font-weight:700;font-size:0.95rem;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:999;transition:opacity 0.5s;';
+  msg.textContent = '✓ Booking confirmed! Check your email for the invite.';
+  document.body.appendChild(msg);
+  setTimeout(() => { msg.style.opacity = '0'; setTimeout(() => msg.remove(), 500); }, 3500);
+}
+
+// Scroll fade-in
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
